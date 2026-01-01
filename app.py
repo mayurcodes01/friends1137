@@ -1,84 +1,62 @@
 import streamlit as st
 import random
-import time
 
-# Page config
-st.set_page_config(
-    page_title="Hero of My Story",
-    page_icon="💖",
-    layout="centered"
-)
+from chapters import chapter_one, chapter_two, chapter_three
+from messages import FINAL_MESSAGE, ENCOURAGEMENTS
 
-# Load CSS
+st.set_page_config(page_title="Her Journey", page_icon="🌸")
+
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Load messages
-with open("messages.txt", "r", encoding="utf-8") as f:
-    messages = f.readlines()
-
 # Session state
-if "score" not in st.session_state:
-    st.session_state.score = 0
-if "game_over" not in st.session_state:
-    st.session_state.game_over = False
 if "name" not in st.session_state:
     st.session_state.name = ""
+if "chapter" not in st.session_state:
+    st.session_state.chapter = 1
+if "hope" not in st.session_state:
+    st.session_state.hope = 0
 
-# Title
-st.markdown("<h1 class='title'>✨ Hero of My Story ✨</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='title'>🌸 Her Journey 🌸</h1>", unsafe_allow_html=True)
 
-# Welcome screen
+# Name input
 if st.session_state.name == "":
-    st.markdown("<p class='subtitle'>Enter your hero name</p>", unsafe_allow_html=True)
-    name = st.text_input("", placeholder="Her name here 💕")
-    if st.button("Start the Journey"):
+    st.markdown("### Enter your hero name")
+    name = st.text_input("", placeholder="Her name here 💖")
+    if st.button("Begin"):
         st.session_state.name = name
         st.experimental_rerun()
+    st.stop()
 
-# Game screen
-elif not st.session_state.game_over:
-    st.markdown(
-        f"<h2 class='hero'>Welcome, {st.session_state.name} 🌸</h2>",
-        unsafe_allow_html=True
-    )
+# Load chapter
+if st.session_state.chapter == 1:
+    chapter = chapter_one()
+elif st.session_state.chapter == 2:
+    chapter = chapter_two()
+elif st.session_state.chapter == 3:
+    chapter = chapter_three()
+else:
+    st.markdown(f"<div class='box final'>{FINAL_MESSAGE}</div>", unsafe_allow_html=True)
+    st.stop()
 
-    st.markdown(
-        "<p class='story'>Collect the light. Every click is strength.</p>",
-        unsafe_allow_html=True
-    )
+# Chapter UI
+st.markdown(f"<h2 class='chapter'>{chapter['title']}</h2>", unsafe_allow_html=True)
+st.markdown(f"<div class='box story'>{chapter['story']}</div>", unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns(3)
+st.progress(min(st.session_state.hope / chapter["goal"], 1.0))
 
-    with col2:
-        if st.button("✨ Collect Light"):
-            st.session_state.score += random.randint(1, 3)
-
-    st.markdown(
-        f"<div class='score'>Light Collected: {st.session_state.score} ✨</div>",
-        unsafe_allow_html=True
-    )
-
-    if st.session_state.score >= 15:
-        st.session_state.game_over = True
-        time.sleep(0.5)
+for text, value in chapter["choices"]:
+    if st.button(text):
+        st.session_state.hope += value
         st.experimental_rerun()
 
-# Win screen
-else:
-    message = random.choice(messages)
+# Encouragement
+if st.session_state.hope < chapter["goal"]:
+    st.info(random.choice(ENCOURAGEMENTS))
 
-    st.markdown(
-        f"<h2 class='win'>You did it, {st.session_state.name} 💖</h2>",
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        f"<div class='final-message'>{message}</div>",
-        unsafe_allow_html=True
-    )
-
-    if st.button("Play Again"):
-        st.session_state.score = 0
-        st.session_state.game_over = False
+# Chapter completion
+if st.session_state.hope >= chapter["goal"]:
+    st.success("Chapter completed 🌸")
+    if st.button("Continue"):
+        st.session_state.chapter += 1
         st.experimental_rerun()
