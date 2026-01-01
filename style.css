@@ -1,0 +1,51 @@
+body {
+    background: linear-gradient(135deg, #fde2e4, #e0f7fa);
+    font-family: "Segoe UI", sans-serif;
+}
+
+.title {
+    text-align: center;
+    color: #6a0572;
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 20px;
+    color: #444;
+}
+
+.hero {
+    text-align: center;
+    color: #5f0f40;
+}
+
+.story {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.score {
+    text-align: center;
+    font-size: 22px;
+    margin-top: 20px;
+    color: #1b4332;
+}
+
+.win {
+    text-align: center;
+    font-size: 36px;
+    color: #9d0208;
+}
+
+.final-message {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
